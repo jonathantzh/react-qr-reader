@@ -15,7 +15,7 @@ let workerBlob = createBlob([__inline('../lib/worker.js')], {
 })
 
 // Props that are allowed to change dynamicly
-const propsKeys = ['delay', 'legacyMode', 'facingMode']
+const propsKeys = ['delay', 'legacyMode', 'facingMode', 'hideBorder']
 
 module.exports = class Reader extends Component {
   static propTypes = {
@@ -30,14 +30,16 @@ module.exports = class Reader extends Component {
     showViewFinder: PropTypes.bool,
     style: PropTypes.any,
     className: PropTypes.string,
-    constraints: PropTypes.object
+    constraints: PropTypes.object,
+    hideBorder: PropTypes.bool
   };
   static defaultProps = {
     delay: 500,
     resolution: 600,
     facingMode: 'environment',
     showViewFinder: true,
-    constraints: null
+    constraints: null,
+    hideBorder: false
   };
 
   els = {};
@@ -82,6 +84,10 @@ module.exports = class Reader extends Component {
         this.clearComponent()
         this.initiate(nextProps)
         break
+      } else if(prop == 'hideBorder') {
+        this.clearComponent()
+        this.initiate(nextProps)
+        break        
       } else if (prop == 'delay') {
         if (this.props.delay == false && !nextProps.legacyMode) {
           this.timeout = setTimeout(this.check, nextProps.delay)
@@ -312,7 +318,8 @@ module.exports = class Reader extends Component {
       onImageLoad,
       legacyMode,
       showViewFinder,
-      facingMode
+      facingMode,
+      hideBorder
     } = this.props
 
     const containerStyle = {
@@ -346,7 +353,7 @@ module.exports = class Reader extends Component {
       left: 0,
       zIndex: 1,
       boxSizing: 'border-box',
-      border: '50px solid rgba(0, 0, 0, 0.3)',
+      border: hideBorder ? 'none' : '50px solid rgba(0, 0, 0, 0.3)',
       boxShadow: 'inset 0 0 0 5px rgba(255, 0, 0, 0.5)',
       position: 'absolute',
       width: '100%',
